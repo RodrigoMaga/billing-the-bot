@@ -23,6 +23,7 @@ public class ParticipantController {
         participant.setEmail(obj.email());
         participant.setPhone(obj.phone());
         participant.setBillingOrder(obj.billingOrder());
+
         return participantService.insert(participant);
     }
 
