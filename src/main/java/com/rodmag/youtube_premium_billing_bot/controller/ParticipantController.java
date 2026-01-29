@@ -4,10 +4,10 @@ import com.rodmag.youtube_premium_billing_bot.controller.dto.request.NewParticip
 import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.services.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/participants")
@@ -25,4 +25,15 @@ public class ParticipantController {
         participant.setBillingOrder(obj.billingOrder());
         return participantService.insert(participant);
     }
+
+    @GetMapping
+    public List<Participant> findAll() {
+        return participantService.findAll();
+    }
+
+    @GetMapping(value = "/{id}")
+    public Optional<Participant> findById(@PathVariable Long id) {
+        return participantService.findById(id);
+    }
+
 }
