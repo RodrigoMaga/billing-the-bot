@@ -23,12 +23,13 @@ public class ParticipantService {
         participantRepository.findByPhone(obj.getPhone())
                 .ifPresent(p -> {throw new ResourceAlreadyExistsException("Phone number already exists: " + obj.getPhone());
                 });
-        if (obj.getBillingOrder() > 1 && obj.getBillingOrder() < 6) {
-            participantRepository.findByBillingOrder(obj.getBillingOrder()).ifPresent(p -> {throw new ResourceAlreadyExistsException("Billing Order already exists: " + obj.getBillingOrder());
-            });
-        } else if (obj.getBillingOrder() < 1 || obj.getBillingOrder() > 6) {
+        if (obj.getBillingOrder() < 1 || obj.getBillingOrder() > 6) {
             throw new DatabaseException("The order must be from 1 to 6");
         }
+
+        participantRepository.findByBillingOrder(obj.getBillingOrder())
+                .ifPresent(p -> {throw new ResourceAlreadyExistsException("Billing Order already exists: " + obj.getBillingOrder());
+                });
         return participantRepository.save(obj);
     }
 
