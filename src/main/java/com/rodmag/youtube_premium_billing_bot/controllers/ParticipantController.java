@@ -6,6 +6,7 @@ import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.services.ParticipantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,13 +14,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/participants")
+@Validated
 public class ParticipantController {
 
     @Autowired
     private ParticipantService participantService;
 
     @PostMapping
-    public ParticipantResponseDto insert(@RequestBody @Valid NewParticipantRequestDto obj){
+    public ParticipantResponseDto insert(@Valid @RequestBody NewParticipantRequestDto obj){
         Participant participant = new Participant();
         participant.setName(obj.name());
         participant.setEmail(obj.email());
