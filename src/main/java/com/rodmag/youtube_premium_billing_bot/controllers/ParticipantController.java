@@ -1,9 +1,10 @@
-package com.rodmag.youtube_premium_billing_bot.controller;
+package com.rodmag.youtube_premium_billing_bot.controllers;
 
-import com.rodmag.youtube_premium_billing_bot.controller.dto.request.NewParticipantRequestDto;
-import com.rodmag.youtube_premium_billing_bot.controller.dto.response.ParticipantResponseDto;
+import com.rodmag.youtube_premium_billing_bot.controllers.dto.request.NewParticipantRequestDto;
+import com.rodmag.youtube_premium_billing_bot.controllers.dto.response.ParticipantResponseDto;
 import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.services.ParticipantService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +19,14 @@ public class ParticipantController {
     private ParticipantService participantService;
 
     @PostMapping
-    public ParticipantResponseDto insert(@RequestBody NewParticipantRequestDto obj){
+    public ParticipantResponseDto insert(@RequestBody @Valid NewParticipantRequestDto obj){
         Participant participant = new Participant();
         participant.setName(obj.name());
         participant.setEmail(obj.email());
         participant.setPhone(obj.phone());
         participant.setBillingOrder(obj.billingOrder());
-        participantService.insert(participant);
-        return new ParticipantResponseDto(participant);
+        Participant saved = participantService.insert(participant);
+        return new ParticipantResponseDto(saved);
     }
 
     @GetMapping

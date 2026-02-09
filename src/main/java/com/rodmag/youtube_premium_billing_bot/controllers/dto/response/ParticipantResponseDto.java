@@ -1,4 +1,4 @@
-package com.rodmag.youtube_premium_billing_bot.controller.dto.response;
+package com.rodmag.youtube_premium_billing_bot.controllers.dto.response;
 
 import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 

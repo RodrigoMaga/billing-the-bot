@@ -1,5 +1,6 @@
 package com.rodmag.youtube_premium_billing_bot.entities;
 
+import com.rodmag.youtube_premium_billing_bot.exceptions.DatabaseException;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -108,6 +109,11 @@ public class Participant implements Serializable {
                 ", phone='" + phone + '\'' +
                 ", order=" + billingOrder +
                 '}';
+    }
+
+    public void validateBillingOrder() {
+        if (billingOrder == null || billingOrder < 1 || billingOrder > 6)
+            throw new DatabaseException("Billing order must be between 1 and 6");
     }
 }
 
