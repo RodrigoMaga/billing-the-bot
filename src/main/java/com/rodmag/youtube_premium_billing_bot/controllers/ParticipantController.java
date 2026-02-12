@@ -6,6 +6,7 @@ import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.services.ParticipantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class ParticipantController {
     @Autowired
     private ParticipantService participantService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ParticipantResponseDto insert(@Valid @RequestBody NewParticipantRequestDto obj){
         Participant participant = new Participant();
@@ -31,6 +33,7 @@ public class ParticipantController {
         return new ParticipantResponseDto(saved);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<ParticipantResponseDto> findAll() {
         return participantService.findAll()
@@ -39,6 +42,7 @@ public class ParticipantController {
                 .toList();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}")
     public Optional<ParticipantResponseDto> findById(@PathVariable Long id) {
         return participantService.findById(id)
