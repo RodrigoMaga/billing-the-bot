@@ -1,18 +1,19 @@
 package com.rodmag.youtube_premium_billing_bot.services;
 
-import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.entities.Payment;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.PaymentStatus;
 import com.rodmag.youtube_premium_billing_bot.exceptions.ParticipantNotFoundException;
 import com.rodmag.youtube_premium_billing_bot.repositories.PaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentSettlementService {
 
-    @Autowired
-    private PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
+
+    public PaymentSettlementService(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     public void execute(Payment newPayment) {
 

@@ -1,13 +1,21 @@
 package com.rodmag.youtube_premium_billing_bot.controllers;
 
+import com.rodmag.youtube_premium_billing_bot.controllers.dto.filter.PaymentFilterDto;
 import com.rodmag.youtube_premium_billing_bot.controllers.dto.request.NewPaymentSettlementRequestDto;
+import com.rodmag.youtube_premium_billing_bot.controllers.dto.request.PageRequestDto;
+import com.rodmag.youtube_premium_billing_bot.controllers.dto.response.PageResponseDto;
 import com.rodmag.youtube_premium_billing_bot.controllers.dto.response.PaymentResponseDto;
 import com.rodmag.youtube_premium_billing_bot.entities.Participant;
 import com.rodmag.youtube_premium_billing_bot.entities.Payment;
-import com.rodmag.youtube_premium_billing_bot.exceptions.ParticipantNotFoundException;
-import com.rodmag.youtube_premium_billing_bot.services.ParticipantService;
+import com.rodmag.youtube_premium_billing_bot.entities.enums.PaymentStatus;
+import com.rodmag.youtube_premium_billing_bot.entities.enums.SortBy;
+import com.rodmag.youtube_premium_billing_bot.entities.enums.SortDirection;
+import com.rodmag.youtube_premium_billing_bot.services.PaymentService;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentSettlementService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,8 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/payments")
 public class PaymentController {
 
-    @Autowired
-    private PaymentSettlementService paymentSettlementService;
+    private final PaymentSettlementService paymentSettlementService;
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentSettlementService paymentSettlementService,PaymentService paymentService) {
+        this.paymentSettlementService = paymentSettlementService;
+        this.paymentService = paymentService;
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/settlement")
@@ -30,5 +43,34 @@ public class PaymentController {
         payment.setParticipant(participant);
 
         paymentSettlementService.execute(payment);
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    public PaymentResponseDto findById(@PathVariable Long id) {
+        Payment payment = paymentService.findById(id);
+        return new PaymentResponseDto(payment);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
+    public PageResponseDto<PaymentResponseDto> search(@NotNull @Min(0) @RequestParam(defaultValue = "0") Integer page,
+                                                       @NotNull @Positive @RequestParam(defaultValue = "10") Integer size,
+                                                      @RequestParam(defaultValue = "YEAR") SortBy sortBy,
+                                                      @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
+                                                      @RequestParam(required = false) Integer month,
+                                                      @RequestParam(required = false) Integer year,
+                                                      @RequestParam(required = false) PaymentStatus paymentStatus,
+                                                      @RequestParam(required = false) Long participantId) {
+
+        PageRequestDto pageRequestDto = new PageRequestDto(page, size, sortBy, sortDirection);
+        PaymentFilterDto filter = new PaymentFilterDto(month, year, paymentStatus, participantId);
+
+        Page<PaymentResponseDto> result = paymentService
+                .search(pageRequestDto, filter)
+                .map(PaymentResponseDto::new);
+
+        return PageResponseDto.from(result);
     }
 }
