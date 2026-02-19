@@ -12,7 +12,9 @@ import com.rodmag.youtube_premium_billing_bot.entities.enums.SortBy;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.SortDirection;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentService;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentSettlementService;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -53,8 +55,8 @@ public class PaymentController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public PageResponseDto<PaymentResponseDto> search(@NotNull @RequestParam(defaultValue = "0") Integer page,
-                                                       @NotNull @RequestParam(defaultValue = "10") Integer size,
+    public PageResponseDto<PaymentResponseDto> search(@NotNull @Min(0) @RequestParam(defaultValue = "0") Integer page,
+                                                       @NotNull @Positive @RequestParam(defaultValue = "10") Integer size,
                                                       @RequestParam(defaultValue = "YEAR") SortBy sortBy,
                                                       @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
                                                       @RequestParam(required = false) Integer month,
