@@ -13,7 +13,6 @@ import com.rodmag.youtube_premium_billing_bot.entities.enums.SortDirection;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentService;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentSettlementService;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +21,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/payments")
 public class PaymentController {
 
-    @Autowired
-    private PaymentSettlementService paymentSettlementService;
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentSettlementService paymentSettlementService;
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentSettlementService paymentSettlementService,PaymentService paymentService) {
+        this.paymentSettlementService = paymentSettlementService;
+        this.paymentService = paymentService;
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/settlement")
@@ -42,6 +44,12 @@ public class PaymentController {
 
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    public PaymentResponseDto findById(@PathVariable Long id) {
+        Payment payment = paymentService.findById(id);
+        return new PaymentResponseDto(payment);
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
@@ -62,6 +70,5 @@ public class PaymentController {
                 .map(PaymentResponseDto::new);
 
         return PageResponseDto.from(result);
-
     }
 }

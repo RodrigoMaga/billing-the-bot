@@ -4,6 +4,7 @@ import com.rodmag.youtube_premium_billing_bot.controllers.dto.filter.PaymentFilt
 import com.rodmag.youtube_premium_billing_bot.controllers.dto.request.PageRequestDto;
 import com.rodmag.youtube_premium_billing_bot.entities.Payment;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.SortDirection;
+import com.rodmag.youtube_premium_billing_bot.exceptions.PaymentNotFound;
 import com.rodmag.youtube_premium_billing_bot.repositories.PaymentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,11 @@ public class PaymentService {
 
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
+    }
+
+    public Payment findById(Long id) {
+        return paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentNotFound("Payment not found with id: " + id));
     }
 
     public Page<Payment> search(PageRequestDto pageRequestDto, PaymentFilterDto paymentFilterDto) {
@@ -39,7 +45,6 @@ public class PaymentService {
 
         return paymentRepository.findAll(buildSpecification(paymentFilterDto), pageable);
     }
-
 
     public static Specification<Payment> buildSpecification(PaymentFilterDto filter) {
         return (root, query, criteriaBuilder) -> {
