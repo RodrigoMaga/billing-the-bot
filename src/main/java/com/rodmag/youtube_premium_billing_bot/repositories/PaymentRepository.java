@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Long>, JpaSpecificationExecutor<Payment> {
 
     Optional<Payment> findFirstByMonthAndYearAndParticipant_Id(Integer month, Integer year, Long participantId);
+    Optional<Payment> findTopByOrderByIdDesc();
 }

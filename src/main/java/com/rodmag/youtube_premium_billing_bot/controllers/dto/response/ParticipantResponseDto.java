@@ -7,7 +7,8 @@ public record ParticipantResponseDto(
         String name,
         String email,
         String phone,
-        Integer billingOrder
+        Integer billingOrder,
+        Boolean notificationEnable
 ) {
     public ParticipantResponseDto(Participant participant) {
         this(
@@ -15,7 +16,8 @@ public record ParticipantResponseDto(
                 participant.getName(),
                 participant.getEmail(),
                 participant.getPhone(),
-                participant.getBillingOrder()
+                participant.getBillingOrder(),
+                participant.getNotificationEnable()
         );
     }
 }

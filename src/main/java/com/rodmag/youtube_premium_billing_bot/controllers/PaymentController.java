@@ -10,6 +10,7 @@ import com.rodmag.youtube_premium_billing_bot.entities.Payment;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.PaymentStatus;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.SortBy;
 import com.rodmag.youtube_premium_billing_bot.entities.enums.SortDirection;
+import com.rodmag.youtube_premium_billing_bot.services.BillingScheduleService;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentService;
 import com.rodmag.youtube_premium_billing_bot.services.PaymentSettlementService;
 import jakarta.validation.constraints.Min;
@@ -25,10 +26,12 @@ public class PaymentController {
 
     private final PaymentSettlementService paymentSettlementService;
     private final PaymentService paymentService;
+    private final BillingScheduleService billingScheduleService;
 
-    public PaymentController(PaymentSettlementService paymentSettlementService,PaymentService paymentService) {
+    public PaymentController(PaymentSettlementService paymentSettlementService, PaymentService paymentService, BillingScheduleService billingScheduleService) {
         this.paymentSettlementService = paymentSettlementService;
         this.paymentService = paymentService;
+        this.billingScheduleService = billingScheduleService;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -72,5 +75,11 @@ public class PaymentController {
                 .map(PaymentResponseDto::new);
 
         return PageResponseDto.from(result);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public void create() {
+        billingScheduleService.processDailyBilling();
     }
 }
