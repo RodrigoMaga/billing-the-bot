@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,15 +39,14 @@ public class BillingService {
 
         Integer nextParticipantOrder;
 
-        if (currentDay == 1) {
+        if (currentDay == 24) {
             if (lastPayment.isEmpty()) {
                 Payment newPayment = new Payment();
                 newPayment.setMonth(currentMonth);
                 newPayment.setYear(currentYear);
                 newPayment.setPaymentStatus(PaymentStatus.NOT_PAID);
                 newPayment.setParticipant(participants.stream()
-                        .filter(p -> p.getBillingOrder().equals(1))
-                        .findFirst()
+                        .min(Comparator.comparingInt(Participant::getBillingOrder))
                         .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
                 paymentRepository.save(newPayment);
             } else {
