@@ -1,8 +1,9 @@
 package com.rodmag.youtube_premium_billing_bot.services;
 
 import com.rodmag.youtube_premium_billing_bot.entities.Participant;
+import com.rodmag.youtube_premium_billing_bot.exceptions.ParticipantNotFoundException;
 import com.rodmag.youtube_premium_billing_bot.repositories.ParticipantRepository;
-import com.rodmag.youtube_premium_billing_bot.services.exceptions.ResourceAlreadyExistsException;
+import com.rodmag.youtube_premium_billing_bot.exceptions.ResourceAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,6 @@ public class ParticipantService {
     public ParticipantService(ParticipantRepository participantRepository) {
         this.participantRepository = participantRepository;
     }
-
 
     public Participant insert(Participant obj) {
 
@@ -45,6 +45,7 @@ public class ParticipantService {
     }
 
     public Optional<Participant> findById(Long id) {
-        return participantRepository.findById(id);
+        return Optional.of(participantRepository.findById(id)
+                .orElseThrow(() -> new ParticipantNotFoundException("Participant not found with id: " + id)));
     }
 }

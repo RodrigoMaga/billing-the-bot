@@ -17,8 +17,6 @@ public record NewParticipantRequestDto(
         String phone,
 
         @NotNull
-        @Min(1)
-        @Max(6)
         Integer billingOrder,
 
         @NotNull

@@ -25,47 +25,48 @@ public class BillingService {
         this.paymentRepository = paymentRepository;
     }
 
-
     @Transactional
     public void generateMonthlyBillings() {
 
         LocalDate today = LocalDate.now();
+        Integer currentDay = today.getDayOfMonth();
         Integer currentMonth = today.getMonthValue();
         Integer currentYear = today.getYear();
-        Integer currentDay = today.getDayOfMonth();
+
+        if (currentDay != 1) {
+            return;
+        }
+
 
         Optional<Payment> lastPayment = paymentRepository.findTopByOrderByIdDesc();
         List<Participant> participants = participantRepository.findAll();
 
-        Integer nextParticipantOrder;
+        Payment newPayment = new Payment();
+        newPayment.setMonth(currentMonth);
+        newPayment.setYear(currentYear);
+        newPayment.setPaymentStatus(PaymentStatus.NOT_PAID);
 
-        if (currentDay == 24) {
-            if (lastPayment.isEmpty()) {
-                Payment newPayment = new Payment();
-                newPayment.setMonth(currentMonth);
-                newPayment.setYear(currentYear);
-                newPayment.setPaymentStatus(PaymentStatus.NOT_PAID);
-                newPayment.setParticipant(participants.stream()
-                        .min(Comparator.comparingInt(Participant::getBillingOrder))
-                        .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
-                paymentRepository.save(newPayment);
+        if (lastPayment.isEmpty()) {
+            newPayment.setParticipant(participants.stream()
+                    .min(Comparator.comparingInt(Participant::getBillingOrder))
+                    .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
+            paymentRepository.save(newPayment);
+        } else {
+            Integer lastParticipantOrder = lastPayment.get().getParticipant().getBillingOrder();
+            Integer nextParticipantOrder;
+            if (lastParticipantOrder.equals(participants.size())) {
+                nextParticipantOrder = 1;
             } else {
-                Integer lastParticipantOrder = lastPayment.get().getParticipant().getBillingOrder();
-                if (lastParticipantOrder.equals(participants.size())) {
-                    nextParticipantOrder = 1;
-                } else {
-                    nextParticipantOrder = lastParticipantOrder + 1;
-                }
-                Payment newPayment = new Payment();
-                newPayment.setMonth(currentMonth);
-                newPayment.setYear(currentYear);
-                newPayment.setPaymentStatus(PaymentStatus.NOT_PAID);
-                newPayment.setParticipant(participants.stream()
-                        .filter(p -> p.getBillingOrder().equals(nextParticipantOrder))
-                        .findFirst()
-                        .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
-                paymentRepository.save(newPayment);
+                nextParticipantOrder = lastParticipantOrder + 1;
             }
+            newPayment.setMonth(currentMonth);
+            newPayment.setYear(currentYear);
+            newPayment.setPaymentStatus(PaymentStatus.NOT_PAID);
+            newPayment.setParticipant(participants.stream()
+                    .filter(p -> p.getBillingOrder().equals(nextParticipantOrder))
+                    .findFirst()
+                    .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
+            paymentRepository.save(newPayment);
         }
     }
 }

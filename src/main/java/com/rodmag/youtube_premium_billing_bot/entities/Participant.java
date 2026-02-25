@@ -87,6 +87,7 @@ public class Participant implements Serializable {
 
     public void setBillingOrder(Integer billingOrder) {
         this.billingOrder = billingOrder;
+
     }
 
     public Boolean getNotificationEnable() {

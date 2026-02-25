@@ -44,7 +44,7 @@ CREATE TABLE payment (
                              COMMENT 'Year of the payment (e.g. 2024)',
 
                          CONSTRAINT uk_payment_participant_month
-                             UNIQUE (participant_id, payment_month, payment_year),
+                             UNIQUE (payment_month, payment_year),
 
                          CONSTRAINT fk_payment_participant
                              FOREIGN KEY (participant_id)
