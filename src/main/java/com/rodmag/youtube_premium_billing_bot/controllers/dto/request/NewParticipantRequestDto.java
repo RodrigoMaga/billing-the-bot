@@ -17,9 +17,6 @@ public record NewParticipantRequestDto(
         String phone,
 
         @NotNull
-        Integer billingOrder,
-
-        @NotNull
         Boolean notificationEnable
 ) {
 }

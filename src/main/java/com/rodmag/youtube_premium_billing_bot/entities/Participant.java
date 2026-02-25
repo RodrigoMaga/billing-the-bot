@@ -87,7 +87,6 @@ public class Participant implements Serializable {
 
     public void setBillingOrder(Integer billingOrder) {
         this.billingOrder = billingOrder;
-
     }
 
     public Boolean getNotificationEnable() {
@@ -127,8 +126,9 @@ public class Participant implements Serializable {
 
     public void validateBillingOrder() {
         if (billingOrder == null || billingOrder < 1 || billingOrder > 6)
-            throw new BillingOrderOutOfRangeException("Billing order must be between 1 and 6");
+            throw new BillingOrderOutOfRangeException("Billing order must be between 1 and 6 " + billingOrder);
     }
+
 }
 
 

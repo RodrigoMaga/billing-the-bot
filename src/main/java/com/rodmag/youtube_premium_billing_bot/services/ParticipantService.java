@@ -20,6 +20,8 @@ public class ParticipantService {
 
     public Participant insert(Participant obj) {
 
+        Integer maxBillingOrder = participantRepository.findMaxBillingOrder();
+        obj.setBillingOrder(maxBillingOrder + 1);
         obj.validateBillingOrder();
 
         participantRepository.findFirstByEmailOrPhoneOrBillingOrder(obj.getEmail(), obj.getPhone(), obj.getBillingOrder())

@@ -30,7 +30,6 @@ public class ParticipantController {
         participant.setName(obj.name());
         participant.setEmail(obj.email());
         participant.setPhone(obj.phone());
-        participant.setBillingOrder(obj.billingOrder());
         participant.setNotificationEnable(obj.notificationEnable());
         Participant saved = participantService.insert(participant);
         return new ParticipantResponseDto(saved);

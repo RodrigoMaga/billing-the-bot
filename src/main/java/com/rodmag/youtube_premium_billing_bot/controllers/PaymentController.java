@@ -76,10 +76,4 @@ public class PaymentController {
 
         return PageResponseDto.from(result);
     }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public void create() {
-        billingScheduleService.processDailyBilling();
-    }
 }
