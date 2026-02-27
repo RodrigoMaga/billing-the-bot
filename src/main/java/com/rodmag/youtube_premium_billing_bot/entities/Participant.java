@@ -31,6 +31,9 @@ public class Participant implements Serializable {
     @Column(name = "billing_order",  nullable = false)
     private Integer billingOrder;
 
+    @Column(name = "notification_enable", nullable = false)
+    private Boolean notificationEnable = true;
+
     @OneToMany(mappedBy = "participant")
     private List<Payment> payments = new ArrayList<>();
 
@@ -43,6 +46,7 @@ public class Participant implements Serializable {
         this.email = email;
         this.phone = phone;
         this.billingOrder = billingOrder;
+        this.notificationEnable = true;
     }
 
     public Long getId() {
@@ -85,6 +89,14 @@ public class Participant implements Serializable {
         this.billingOrder = billingOrder;
     }
 
+    public Boolean getNotificationEnable() {
+        return notificationEnable;
+    }
+
+    public void setNotificationEnable(Boolean notificationEnable) {
+        this.notificationEnable = notificationEnable;
+    }
+
     public List<Payment> getPayments() {
         return payments;
     }
@@ -108,13 +120,15 @@ public class Participant implements Serializable {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", order=" + billingOrder +
+                ", notificationEnable=" + notificationEnable +
                 '}';
     }
 
     public void validateBillingOrder() {
         if (billingOrder == null || billingOrder < 1 || billingOrder > 6)
-            throw new BillingOrderOutOfRangeException("Billing order must be between 1 and 6");
+            throw new BillingOrderOutOfRangeException("Billing order must be between 1 and 6 " + billingOrder);
     }
+
 }
 
 

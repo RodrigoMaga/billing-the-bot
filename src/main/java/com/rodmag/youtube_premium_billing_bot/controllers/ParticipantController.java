@@ -23,7 +23,6 @@ public class ParticipantController {
         this.participantService = participantService;
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ParticipantResponseDto insert(@Valid @RequestBody NewParticipantRequestDto obj){
@@ -31,7 +30,7 @@ public class ParticipantController {
         participant.setName(obj.name());
         participant.setEmail(obj.email());
         participant.setPhone(obj.phone());
-        participant.setBillingOrder(obj.billingOrder());
+        participant.setNotificationEnable(obj.notificationEnable());
         Participant saved = participantService.insert(participant);
         return new ParticipantResponseDto(saved);
     }
