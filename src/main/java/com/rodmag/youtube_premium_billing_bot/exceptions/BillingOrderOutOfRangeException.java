@@ -1,8 +1,10 @@
 package com.rodmag.youtube_premium_billing_bot.exceptions;
 
-public class BillingOrderOutOfRangeException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class BillingOrderOutOfRangeException extends BusinessException {
 
     public BillingOrderOutOfRangeException(String msg) {
-        super(msg);
+        super(msg, HttpStatus.BAD_REQUEST);
     }
 }

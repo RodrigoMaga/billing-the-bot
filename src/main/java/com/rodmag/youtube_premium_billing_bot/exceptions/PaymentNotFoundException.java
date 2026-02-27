@@ -1,7 +1,9 @@
 package com.rodmag.youtube_premium_billing_bot.exceptions;
 
-public class PaymentNotFoundException extends RuntimeException{
+import org.springframework.http.HttpStatus;
+
+public class PaymentNotFoundException extends BusinessException{
     public PaymentNotFoundException(String msg) {
-        super(msg);
+        super(msg, HttpStatus.NOT_FOUND);
     }
 }
