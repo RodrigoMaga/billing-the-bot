@@ -62,6 +62,12 @@
             <version>2.5.0</version>
         </dependency>
 
+        <!-- JavaMail para envio de emails -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

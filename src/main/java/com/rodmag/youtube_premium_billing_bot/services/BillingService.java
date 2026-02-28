@@ -19,10 +19,12 @@ public class BillingService {
 
     private final ParticipantRepository participantRepository;
     private final PaymentRepository paymentRepository;
+    private final EmailService emailService;
 
-    public BillingService(ParticipantRepository participantRepository, PaymentRepository paymentRepository) {
+    public BillingService(ParticipantRepository participantRepository, PaymentRepository paymentRepository, EmailService emailService) {
         this.participantRepository = participantRepository;
         this.paymentRepository = paymentRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -80,8 +82,8 @@ public class BillingService {
                     .map(Payment::getParticipant)
                     .toList();
 
-            participantsToNotify.forEach(participant -> System.out.println("A wild senhor barriga appeared!"
-                    + participant.getName() + " is being notified about the pending payment."));
+            participantsToNotify.forEach(participant -> emailService.sendEmail(participant.getEmail(), "A wild senhor barriga appeared!",
+                    participant.getName() + " is being notified about the pending payment."));
         }
     }
 }
