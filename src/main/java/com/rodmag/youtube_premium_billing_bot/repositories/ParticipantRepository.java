@@ -12,4 +12,5 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     @Query("SELECT COALESCE(MAX(p.billingOrder), 0) FROM Participant p")
     Integer findMaxBillingOrder();
 
+
 }

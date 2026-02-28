@@ -69,4 +69,19 @@ public class BillingService {
             paymentRepository.save(newPayment);
         }
     }
+    @Transactional
+    public void dailyBillingCheck() {
+
+        List<Payment> pendingPayments = paymentRepository.findAllByPaymentStatus(PaymentStatus.NOT_PAID);
+
+        if (!pendingPayments.isEmpty()) {
+
+            List<Participant> participantsToNotify = pendingPayments.stream()
+                    .map(Payment::getParticipant)
+                    .toList();
+
+            participantsToNotify.forEach(participant -> System.out.println("A wild senhor barriga appeared!"
+                    + participant.getName() + " is being notified about the pending payment."));
+        }
+    }
 }

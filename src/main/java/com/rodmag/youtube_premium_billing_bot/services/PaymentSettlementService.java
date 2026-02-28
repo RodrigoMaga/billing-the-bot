@@ -22,6 +22,7 @@ public class PaymentSettlementService {
                                 .ifPresentOrElse(foundPayment -> {
                                     foundPayment.setPaymentStatus(PaymentStatus.PAID);
                                     paymentRepository.save(foundPayment);
+                                    System.out.println("Payment settled successfully for participant: " + foundPayment.getParticipant().getEmail() + " for month: " + foundPayment.getMonth() + " and year: " + foundPayment.getYear());
                                 }, () -> {
                                     throw new ParticipantNotFoundException("No pending payment found for the given month, year, and participant.");
                                 });

@@ -15,6 +15,7 @@ public class BillingScheduleService {
     @Scheduled(cron = "0 0 0 * * ?") // This cron expression means "At 00:00:00am every day"
     public void processDailyBilling() {
         billingService.generateMonthlyBillings();
+        billingService.dailyBillingCheck();
 
     }
 }
