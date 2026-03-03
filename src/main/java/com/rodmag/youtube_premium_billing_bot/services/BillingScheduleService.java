@@ -16,7 +16,7 @@ public class BillingScheduleService {
         this.billingService = billingService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?") // This cron expression means "At 00:00:00am every day"
+    @Scheduled(fixedDelay = 1000)//(cron = "0 0 0 * * ?") // This cron expression means "At 00:00:00am every day"
     public void processDailyBilling() {
         log.info("Starting daily billing process...");
         billingService.generateMonthlyBillings();

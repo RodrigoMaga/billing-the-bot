@@ -60,9 +60,6 @@ public class BillingService {
             newPayment.setParticipant(participants.stream()
                     .min(Comparator.comparingInt(Participant::getBillingOrder))
                     .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
-            paymentRepository.save(newPayment);
-            log.info("Monthly billing created for participant: {} (Billing Order: {})",
-                    newPayment.getParticipant().getName(), newPayment.getParticipant().getBillingOrder());
         } else {
             Integer lastParticipantOrder = lastPayment.get().getParticipant().getBillingOrder();
             Integer nextParticipantOrder;
@@ -80,10 +77,10 @@ public class BillingService {
                     .filter(p -> p.getBillingOrder().equals(nextParticipantOrder))
                     .findFirst()
                     .orElseThrow(() -> new ParticipantNotFoundException("No participant found")));
-            paymentRepository.save(newPayment);
-            log.info("Monthly billing created for participant: {} (Billing Order: {})",
-                    newPayment.getParticipant().getName(), newPayment.getParticipant().getBillingOrder());
         }
+        paymentRepository.save(newPayment);
+        log.info("Monthly billing created for participant: {} (Billing Order: {})",
+                newPayment.getParticipant().getName(), newPayment.getParticipant().getBillingOrder());
     }
 
     @Transactional
@@ -110,15 +107,11 @@ public class BillingService {
             log.info("Sending email notification to: {} ({})", participant.getName(), participant.getEmail());
             notificationService.emailNotification(participant.getEmail(), "A wild senhor barriga appeared!",
                     participant.getName() + " is being notified about the pending payment.");
-        });
 
-        participantsToNotify.forEach(participant -> {
             log.info("Sending WhatsApp notification to: {} ({})", participant.getName(), participant.getPhone());
             notificationService.whatsAppNotification(participant.getPhone(), "A wild senhor barriga appeared!" +
                     participant.getName() + " is being notified about the pending payment.");
-        });
 
-        participantsToNotify.forEach(participant -> {
             log.info("Sending Telegram notification to: {} ({})", participant.getName(), participant.getPhone());
             notificationService.telegramNotification(participant.getPhone(), "A wild senhor barriga appeared!" +
                     participant.getName() + " is being notified about the pending payment.");

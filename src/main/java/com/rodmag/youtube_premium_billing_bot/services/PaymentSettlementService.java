@@ -5,6 +5,7 @@ import com.rodmag.youtube_premium_billing_bot.entities.enums.PaymentStatus;
 import com.rodmag.youtube_premium_billing_bot.exceptions.ParticipantNotFoundException;
 import com.rodmag.youtube_premium_billing_bot.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PaymentSettlementService {
@@ -15,6 +16,7 @@ public class PaymentSettlementService {
         this.paymentRepository = paymentRepository;
     }
 
+    @Transactional
     public void execute(Payment newPayment) {
 
         paymentRepository.findFirstByMonthAndYearAndParticipant_Id(newPayment.getMonth(), newPayment.getYear(), newPayment.getParticipant().getId())

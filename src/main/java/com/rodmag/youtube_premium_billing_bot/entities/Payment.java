@@ -23,7 +23,7 @@ public class Payment implements Serializable {
     @Column(name = "payment_year", nullable = false)
     private Integer year;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "participant_id", nullable = false)
     private Participant participant;
 
