@@ -13,6 +13,8 @@ public class Payment implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public static final double PAYMENT_VALUE = 54.90;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +32,8 @@ public class Payment implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PaymentStatus paymentStatus;
+
+
 
     public Payment() {
     }
@@ -81,6 +85,7 @@ public class Payment implements Serializable {
     public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
+
 
     @Override
     public boolean equals(Object o) {

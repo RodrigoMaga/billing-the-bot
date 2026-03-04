@@ -106,7 +106,8 @@ public class BillingService {
         participantsToNotify.forEach(participant -> {
             log.info("Sending email notification to: {} ({})", participant.getName(), participant.getEmail());
             notificationService.emailNotification(participant.getEmail(), "A wild senhor barriga appeared!",
-                    participant.getName() + " is being notified about the pending payment.");
+                    participant.getName(), pendingPayments.getFirst().getMonth(), pendingPayments.getFirst().getYear(),
+                    pendingPayments.get(0).getPaymentStatus().name());
 
             log.info("Sending WhatsApp notification to: {} ({})", participant.getName(), participant.getPhone());
             notificationService.whatsAppNotification(participant.getPhone(), "A wild senhor barriga appeared!" +

@@ -1,9 +1,12 @@
 package com.rodmag.youtube_premium_billing_bot.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +22,22 @@ public class EmailService {
     }
 
     @Async
-    public void sendEmail(String to, String subject, String text) {
+    public void sendHtmlEmail(String to, String subject, String htmlContent) {
+
+        log.info("Attempting to send HTML email to: {} with subject: '{}'", to, subject);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
         try {
-            log.info("Attempting to send email to: {} with subject: '{}'", to, subject);
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
             mailSender.send(message);
             log.info("Email successfully sent to: {}", to);
-        } catch (Exception e) {
+        } catch (MessagingException e) {
             log.error("Failed to send email to: {}. Error: {}", to, e.getMessage(), e);
-            throw e;
+            throw new MailSendException("Failed to send email to: " + to, e);
         }
+
     }
 }
