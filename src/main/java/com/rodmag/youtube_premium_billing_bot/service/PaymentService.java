@@ -29,10 +29,19 @@ public class PaymentService {
 
     public Page<Payment> search(PageRequestDto pageRequestDto, PaymentFilterDto paymentFilterDto) {
 
+        if (pageRequestDto.pageSize() < 1) {
+            throw new IllegalArgumentException("Page size must not be less than one");
+        }
+
+        if (paymentFilterDto.year() != null && paymentFilterDto.year() < 1900) {
+            throw new IllegalArgumentException("Payment filter must have a valid month and year");
+        }
+
+        if (paymentFilterDto.month() != null && (paymentFilterDto.month() < 1 || paymentFilterDto.month() > 12)) {
+            throw new IllegalArgumentException("Payment filter must have a valid month and year");
+        }
+
         Sort sort = Sort.by(pageRequestDto.sortBy().property());
-
-
-
         sort = pageRequestDto.sortDirection() == SortDirection.DESC
                 ? sort.descending()
                 : sort.ascending();
@@ -46,7 +55,7 @@ public class PaymentService {
         return paymentRepository.findAll(buildSpecification(paymentFilterDto), pageable);
     }
 
-    public static Specification<Payment> buildSpecification(PaymentFilterDto filter) {
+    private static Specification<Payment> buildSpecification(PaymentFilterDto filter) {
         return (root, query, criteriaBuilder) -> {
             var predicates = criteriaBuilder.conjunction();
 
@@ -60,7 +69,7 @@ public class PaymentService {
                 predicates = criteriaBuilder.and(predicates, criteriaBuilder.equal(root.get("participant").get("id"), filter.participantId()));
             }
             if (filter.paymentStatus() != null) {
-                predicates = criteriaBuilder.and(predicates,criteriaBuilder.equal(root.get("paymentStatus"), filter.paymentStatus())
+                predicates = criteriaBuilder.and(predicates, criteriaBuilder.equal(root.get("paymentStatus"), filter.paymentStatus())
                 );
             }
 
