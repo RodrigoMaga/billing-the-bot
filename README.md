@@ -133,7 +133,7 @@ Exemplo de retorno:
 
 1. Clone o repositório:
 
-git clone https://github.com/seu-usuario/youtube-premium-billing-bot.git
+git clone https://github.com/RodrigoMaga/youtube-premium-billing-bot.git
 
 2. Configure o `application.properties` com seu banco MySQL.
 
