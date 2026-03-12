@@ -10,6 +10,8 @@ import com.rodmag.youtube_premium_billing_bot.exception.PaymentNotFoundException
 import com.rodmag.youtube_premium_billing_bot.repository.PaymentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -131,5 +133,167 @@ public class PaymentServiceTest {
         Assertions.assertThatThrownBy(() -> paymentService.search(pageRequestDto, invalidPaymentFilterDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Payment filter must have a valid month and year");
+    }
+
+    @Nested
+    @DisplayName("Build Specification Tests")
+    class BuildSpecificationTestSuite {
+
+        @Test
+        void should_build_specification_with_all_filters() {
+            System.out.println("Running test: should_build_specification_with_all_filters");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(6, 2024, PaymentStatus.PAID, 1L);
+
+            List<Payment> payments = List.of(new Payment(1L, 6, 2024, null, PaymentStatus.PAID));
+            Page<Payment> expectedPage = new PageImpl<>(payments);
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
+
+        @Test
+        void should_build_specification_with_only_month_filter() {
+            System.out.println("Running test: should_build_specification_with_only_month_filter");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(6, null, null, null);
+
+            Page<Payment> expectedPage = new PageImpl<>(List.of());
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
+
+        @Test
+        void should_build_specification_with_only_year_filter() {
+            System.out.println("Running test: should_build_specification_with_only_year_filter");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(null, 2024, null, null);
+
+            Page<Payment> expectedPage = new PageImpl<>(List.of());
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
+
+        @Test
+        void should_build_specification_with_only_participant_id_filter() {
+            System.out.println("Running test: should_build_specification_with_only_participant_id_filter");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(null, null, null, 1L);
+
+            Page<Payment> expectedPage = new PageImpl<>(List.of());
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
+
+        @Test
+        void should_build_specification_with_only_payment_status_filter() {
+            System.out.println("Running test: should_build_specification_with_only_payment_status_filter");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(null, null, PaymentStatus.PAID, null);
+
+            Page<Payment> expectedPage = new PageImpl<>(List.of());
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
+
+        @Test
+        void should_build_specification_with_no_filters() {
+            System.out.println("Running test: should_build_specification_with_no_filters");
+
+            // given
+            PageRequestDto pageRequestDto = new PageRequestDto(0, 10, SortBy.YEAR, SortDirection.ASC);
+            PaymentFilterDto filterDto = new PaymentFilterDto(null, null, null, null);
+
+            Page<Payment> expectedPage = new PageImpl<>(List.of());
+
+            Mockito.when(paymentRepository.findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            )).thenReturn(expectedPage);
+
+            // when
+            Page<Payment> result = paymentService.search(pageRequestDto, filterDto);
+
+            // then
+            Assertions.assertThat(result).isNotNull();
+            Mockito.verify(paymentRepository).findAll(
+                    ArgumentMatchers.any(Specification.class),
+                    ArgumentMatchers.any(Pageable.class)
+            );
+        }
     }
 }

@@ -52,6 +52,7 @@ public class PaymentService {
                 sort
         );
 
+
         return paymentRepository.findAll(buildSpecification(paymentFilterDto), pageable);
     }
 
