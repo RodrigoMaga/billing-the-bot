@@ -4,24 +4,24 @@
 
 services:
   mysql:
-    networks:
-      - youtube-bot-network
     image: mysql:8.0
     container_name: mysql
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_DATABASE=youtube_premium_billing_bot
-      - MYSQL_ROOT_PASSWORD=1234567
+      MYSQL_DATABASE: youtube_premium_billing_bot
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD obrigatoria}
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p1234567"]
+      test: ["CMD-SHELL", "mysqladmin ping -h127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
       timeout: 5s
       retries: 12
       start_period: 20s
     restart: unless-stopped
+    networks:
+      - youtube-bot-network
 
   youtube-bot:
     networks:
@@ -32,12 +32,11 @@ services:
       - "8080:8080"
     environment:
       # Server config
-      - NODE_ENV=production
-      - YOUTUBE_EMAIL_USERNAME
-      - YOUTUBE_EMAIL_PASSWORD
+      - YOUTUBE_EMAIL_USERNAME=${YOUTUBE_EMAIL_USERNAME}
+      - YOUTUBE_EMAIL_PASSWORD=${YOUTUBE_EMAIL_PASSWORD}
       - DB_URL=jdbc:mysql://mysql:3306/youtube_premium_billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - DB_USERNAME=root
-      - DB_PASSWORD=1234567
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
       mysql:
         condition: service_healthy
@@ -47,5 +46,5 @@ volumes:
   mysql_data:
 
 networks:
-    youtube-bot-network:
-        name: youtube-bot-network
+  youtube-bot-network:
+    name: youtube-bot-network
