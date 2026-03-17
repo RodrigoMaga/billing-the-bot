@@ -14,7 +14,7 @@ O sistema permite:
 
 ## 🚀 Tecnologias Utilizadas
 
-- Java 17+
+- Java 21
 - Spring Boot
 - Spring Data JPA
 - Hibernate
@@ -137,6 +137,7 @@ O arquivo `src/main/resources/application.properties` usa por padrão:
 - host `localhost`
 - porta `3306`
 - banco `youtube_premium_billing_bot`
+git clone https://github.com/RodrigoMaga/youtube-premium-billing-bot.git
 
 Então, para rodar pelo IntelliJ ou Maven localmente, basta ter um MySQL disponível na sua máquina com essas credenciais, ou sobrescrever:
 
