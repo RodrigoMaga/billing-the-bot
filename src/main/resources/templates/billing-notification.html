@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificação de Cobrança - YouTube Premium</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #FF0000;
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #FF0000;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .info-box p {
+            margin: 5px 0;
+        }
+        .info-box strong {
+            color: #FF0000;
+        }
+        .payment-details {
+            margin: 20px 0;
+        }
+        .payment-details p {
+            margin: 10px 0;
+        }
+        .cta-button {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cta-button a {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #FF0000;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🎬 YouTube Premium - Cobrança Mensal</h1>
+    </div>
+
+    <div class="content">
+        <p class="greeting">Olá, <strong th:text="${participantName}"></strong>!</p>
+
+        <p>Este é um lembrete de pagamento da sua assinatura compartilhada do YouTube Premium.</p>
+
+        <div class="info-box">
+            <p><strong>Período de Referência:</strong> <span th:text="${paymentMonth} + '/' + ${paymentYear}">Mês/Ano</span></p>
+            <p><strong>Valor:</strong> R$ <span th:text="${paymentValue}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${paymentStatus}">Pendente</span></p>
+        </div>
+
+        <div class="payment-details">
+            <h3>Dados para Pagamento:</h3>
+            <p><strong>Tipo de Chave PIX:</strong> CPF</p>
+            <p><strong>Chave PIX:</strong> cpfdomateus</p>
+            <p><strong>Favorecido:</strong> Mateus Gomes da Silva Cardoso</p>
+        </div>
+
+        <p>Por favor, realize o pagamento o quanto antes para manter o acesso à assinatura do YouTube Premium.</p>
+
+        <div class="cta-button">
+            <a href="#" th:href="${paymentLink}">Confirmar Pagamento</a>
+        </div>
+
+        <p style="font-size: 14px; color: #666; margin-top: 20px;">
+            <strong>Observação:</strong> Após realizar o pagamento, não se esqueça de confirmar através do link acima ou respondendo este e-mail.
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>Este é um e-mail automático, por favor não responda.</p>
+        <p>Para dúvidas, entre em contato através do e-mail: contato@exemplo.com</p>
+        <p>&copy; 2026 YouTube Premium Billing Bot. Todos os direitos reservados.</p>
+    </div>
+</div>
+</body>
+</html>

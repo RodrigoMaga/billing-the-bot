@@ -21,6 +21,7 @@ O sistema permite:
 - MySQL
 - Maven
 - Swagger / OpenAPI
+- Docker / Docker Compose
 
 ---
 
@@ -129,21 +130,52 @@ Exemplo de retorno:
 
 ---
 
-## ⚙️ Como Executar
+## ⚙️ Como Executar Localmente
 
-1. Clone o repositório:
+O arquivo `src/main/resources/application.properties` usa por padrão:
 
+- host `localhost`
+- porta `3306`
+- banco `youtube_premium_billing_bot`
 git clone https://github.com/RodrigoMaga/youtube-premium-billing-bot.git
 
-2. Configure o `application.properties` com seu banco MySQL.
+Então, para rodar pelo IntelliJ ou Maven localmente, basta ter um MySQL disponível na sua máquina com essas credenciais, ou sobrescrever:
 
-3. Execute o projeto:
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
 
-mvn spring-boot:run
+Exemplo:
 
-ou
-
+```bash
 ./mvnw spring-boot:run
+```
+
+---
+
+## 🐳 Como Executar com Docker Compose
+
+O `docker-compose.yml` sobe dois serviços:
+
+- `mysql`
+- `youtube-bot`
+
+Nesse cenário, a aplicação **não usa `localhost`** para o banco. Ela usa o hostname interno da rede Docker:
+
+- `jdbc:mysql://mysql:3306/youtube_premium_billing_bot`
+
+Para subir:
+
+```bash
+docker compose up --build
+```
+
+Se quiser recriar tudo do zero, incluindo volume do banco:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
 
 ---
 
@@ -151,13 +183,13 @@ ou
 
 Após iniciar a aplicação:
 
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/
 
 ---
 
 ## 📝 Observações
 
-- Projeto focado em backend Java
-- Preparado para futura integração com chatbot (WhatsApp)
-- Estrutura escalável para novas funcionalidades
-
+- Rodando localmente via IntelliJ, o banco costuma ser acessado por `localhost`
+- Rodando via Docker Compose, o banco deve ser acessado pelo nome do serviço `mysql`
+- O erro `Communications link failure` normalmente indica host/porta incorretos ou banco ainda não disponível no momento da conexão
+- O projeto está preparado para futura integração com chatbot (WhatsApp)
