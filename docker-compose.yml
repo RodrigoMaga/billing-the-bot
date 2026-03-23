@@ -27,7 +27,7 @@ services:
   billing-the-bot:
     networks:
       - billing-bot-network
-    image: rodrigo/billing-the-bot:v1
+    image: rodrigomaga/billing-the-bot:latest
     container_name: billing-the-bot
     ports:
       - "8080:8080"
@@ -38,6 +38,12 @@ services:
       - DB_URL=jdbc:mysql://mysql:3306/billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       mysql:
         condition: service_healthy
