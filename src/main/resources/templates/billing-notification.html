@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notificação de Cobrança - YouTube Premium</title>
+    <title>Notificação de Cobrança</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -81,13 +81,13 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>🎬 YouTube Premium - Cobrança Mensal</h1>
+        <h1>💳 Cobrança Mensal</h1>
     </div>
 
     <div class="content">
         <p class="greeting">Olá, <strong th:text="${participantName}"></strong>!</p>
 
-        <p>Este é um lembrete de pagamento da sua assinatura compartilhada do YouTube Premium.</p>
+        <p>Este é um lembrete de pagamento da sua assinatura compartilhada.</p>
 
         <div class="info-box">
             <p><strong>Período de Referência:</strong> <span th:text="${paymentMonth} + '/' + ${paymentYear}">Mês/Ano</span></p>
@@ -102,7 +102,7 @@
             <p><strong>Favorecido:</strong> Mateus Gomes da Silva Cardoso</p>
         </div>
 
-        <p>Por favor, realize o pagamento o quanto antes para manter o acesso à assinatura do YouTube Premium.</p>
+        <p>Por favor, realize o pagamento o quanto antes para manter o acesso à assinatura.</p>
 
         <div class="cta-button">
             <a href="#" th:href="${paymentLink}">Confirmar Pagamento</a>
@@ -116,7 +116,7 @@
     <div class="footer">
         <p>Este é um e-mail automático, por favor não responda.</p>
         <p>Para dúvidas, entre em contato através do e-mail: contato@exemplo.com</p>
-        <p>&copy; 2026 YouTube Premium Billing Bot. Todos os direitos reservados.</p>
+        <p>&copy; 2026 Billing Bot. Todos os direitos reservados.</p>
     </div>
 </div>
 </body>
