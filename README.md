@@ -126,7 +126,6 @@ UNIQUE (participant_id, month, year)
 | `participant` | Participant | Referência ao participante |
 | `createdAt` | LocalDateTime | Data de criação |
 | `updatedAt` | LocalDateTime | Data de atualização |
-| `updatedAt` | LocalDateTime | Data de atualização |
 
 ---
 
@@ -165,8 +164,6 @@ Content-Type: application/json
   "email": "joao@example.com",
   "phone": "+55 11 99999-9999",
   "billingOrder": 1,
-  "createdAt": "2026-03-23T10:30:00",
-  "updatedAt": "2026-03-23T10:30:00"
   "createdAt": "2026-03-23T10:30:00",
   "updatedAt": "2026-03-23T10:30:00"
 }
@@ -209,9 +206,6 @@ Content-Type: application/json
   "participant": {
     "id": 1,
     "name": "João Silva"
-  },
-  "createdAt": "2026-03-23T10:31:00",
-  "updatedAt": "2026-03-23T10:31:00"
   },
   "createdAt": "2026-03-23T10:31:00",
   "updatedAt": "2026-03-23T10:31:00"
