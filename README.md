@@ -548,9 +548,9 @@ Este projeto está sob a licença [MIT](LICENSE). Veja o arquivo `LICENSE` para 
 
 ## 👨‍💻 Autor
 
-**Rodrigo Maga**
+**Rodrigo Magalhães Nunes**
 - GitHub: [@RodrigoMaga](https://github.com/RodrigoMaga)
-- Email: rodrigomaga@example.com
+- Email: rgn.nunnes@gmail.com
 
 ---
 
