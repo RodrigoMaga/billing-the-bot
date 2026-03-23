@@ -1,4 +1,4 @@
-# 🤖 YouTube Premium Billing Bot
+# 🤖 Billing The Bot
 
 <div align="center">
 
@@ -18,13 +18,15 @@ O sistema foi construído com foco em:
 - ✅ **Integridade de dados** - Constraints únicos no banco
 - ✅ **Arquitetura em camadas** - Separação clara de responsabilidades
 - ✅ **RESTful** - Endpoints bem estruturados
-- ✅ **Preparado para crescimento** - Pronto para integração com chatbots (WhatsApp)
+- ✅ **Notificações automáticas** - Integração com email para avisos de pagamento
+- ✅ **Containerizado** - Pronto para Docker e deploy em produção
 
 ### Funcionalidades Principais
 
 - 👥 **Cadastro de participantes** com informações de contato
 - 💳 **Registro de pagamentos** mensais por participante
 - ✔️ **Liquidação de pagamentos** (marcar como pago)
+- 📧 **Notificações por email** para participantes
 - 🔍 **Consultas paginadas** de pagamentos
 - 🔐 **Segurança de dados** com regras de integridade
 - 📊 **Filtros avançados** por mês, ano e participante
@@ -38,10 +40,12 @@ O sistema foi construído com foco em:
 | **Java** | 21 | Linguagem principal do projeto |
 | **Spring Boot** | 3.2.12 | Framework web e de configuração |
 | **Spring Data JPA** | - | Abstração de persistência de dados |
+| **Spring Mail** | - | Envio de emails e notificações |
 | **Hibernate** | - | ORM para mapeamento de entidades |
 | **MySQL** | 8.0+ | Banco de dados relacional |
 | **Maven** | 3.8+ | Gerenciador de dependências e build |
 | **Swagger/OpenAPI** | 3.0 | Documentação automática de APIs |
+| **Thymeleaf** | - | Template engine para emails HTML |
 | **Docker** | Compose | Containerização da aplicação |
 | **JUnit 5** | - | Framework de testes unitários |
 
@@ -61,7 +65,7 @@ O projeto segue o padrão de **arquitetura em camadas**, garantindo separação 
 ├─────────────────────────────────────────┤
 │      🧠 Service Layer                    │
 │  (Business Logic - PaymentService,       │
-│   ParticipantService)                    │
+│   ParticipantService, EmailService)      │
 ├─────────────────────────────────────────┤
 │   📊 Repository Layer (JPA)              │
 │  (Data Access - PaymentRepository,       │
@@ -75,7 +79,7 @@ O projeto segue o padrão de **arquitetura em camadas**, garantindo separação 
 ### Componentes da Arquitetura
 
 - **Controller**: Recebe requisições HTTP e retorna respostas JSON
-- **Service**: Contém toda lógica de negócio e validações
+- **Service**: Contém lógica de negócio, validações e envio de emails
 - **Repository**: Acessa dados no banco via Spring Data JPA
 - **Entity**: Modelos de domínio mapeados para o banco
 - **DTO**: Objetos de transferência de dados (Request/Response)
@@ -95,9 +99,10 @@ O projeto segue o padrão de **arquitetura em camadas**, garantindo separação 
 │ email               │         │ year                 │
 │ phone               │         │ paymentStatus        │
 │ billingOrder        │         │ participant_id (FK)  │
-│ createdAt           │         │ createdAt            │
-│ updatedAt           │         │ updatedAt            │
-└─────────────────────┘         └──────────────────────┘
+│ notificationEnable  │         │ createdAt            │
+│ createdAt           │         │ updatedAt            │
+│ updatedAt           │         └──────────────────────┘
+└─────────────────────┘
 
 UNIQUE (participant_id, month, year)
 ```
@@ -315,30 +320,48 @@ cd billing-the-bot
 O projeto usa MySQL por padrão. Certifique-se de que está rodando em `localhost:3306`:
 
 ```sql
-CREATE DATABASE youtube_premium_billing_bot;
+CREATE DATABASE billing_bot;
 ```
 
-Ou modifique as credenciais em `src/main/resources/application.properties`:
+Ou crie um arquivo `.env` na raiz do projeto com as credenciais:
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/youtube_premium_billing_bot
-spring.datasource.username=root
-spring.datasource.password=sua_senha
+```env
+DB_URL=jdbc:mysql://localhost:3306/billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+DB_USERNAME=root
+DB_PASSWORD=sua_senha
 ```
 
-### 3. Execute a Aplicação
+As variáveis do `.env` serão carregadas automaticamente pelo `application.properties`.
+
+### 3. Configure Email (Opcional)
+
+Adicione as variáveis de email ao arquivo `.env`:
+
+```env
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=seu_email@gmail.com
+EMAIL_PASSWORD=sua_senha_app
+```
+
+**Nota:** Para Gmail, use uma [senha de app específica](https://support.google.com/accounts/answer/185833) em vez da senha da conta.
+
+### 4. Execute a Aplicação
 
 ```bash
-# Usando Maven
+# Usando Maven Wrapper
 ./mvnw spring-boot:run
 
 # Ou se estiver no Windows
 mvnw.cmd spring-boot:run
+
+# Ou com Maven instalado
+mvn spring-boot:run
 ```
 
 A API estará disponível em: **http://localhost:8080**
 
-### 4. Acesse a Documentação Swagger
+### 5. Acesse a Documentação Swagger
 
 ```
 http://localhost:8080/swagger-ui.html
@@ -360,25 +383,175 @@ http://localhost:8080/swagger-ui.html
 git clone https://github.com/RodrigoMaga/billing-the-bot.git
 cd billing-the-bot
 
+# Crie um arquivo .env com as variáveis (veja seção "Variáveis de Ambiente")
+# Exemplo: DB_URL, DB_USERNAME, DB_PASSWORD, EMAIL_USERNAME, EMAIL_PASSWORD
+
 # Inicie os serviços
-docker compose up --build
+docker compose up -d
 ```
 
 O `docker-compose.yml` inicia automaticamente:
-- **MySQL** na porta 3306
-- **Aplicação** na porta 8080
+- **MySQL 8.0** na porta 3307
+- **Aplicação Spring Boot** na porta 8080
 
-**Nota importante:** Quando rodando em Docker Compose, a aplicação conecta ao banco usando o hostname interno `mysql` (não `localhost`).
+A imagem da aplicação é baixada automaticamente do Docker Hub (`rodrigomaga/billing-the-bot:latest`).
 
-### Limpar Recursos Docker
+As variáveis do arquivo `.env` são automaticamente passadas para os containers.
+
+### Download Manual da Imagem (Opcional)
+
+Se preferir baixar a imagem antes de executar:
 
 ```bash
-# Parar containers
-docker compose down
+docker pull rodrigomaga/billing-the-bot:latest
+```
 
-# Remover volumes do banco (reset total)
+### Acessar a Aplicação
+
+Após iniciar, acesse:
+
+- **API:** http://localhost:8080
+- **Swagger/OpenAPI:** http://localhost:8080/swagger-ui.html
+
+### Parar os Serviços
+
+```bash
+docker compose down
+```
+
+### Remover Volumes (Reset Total)
+
+```bash
 docker compose down -v
+```
+
+Isso remove containers, networks e volumes do banco de dados.
+
+### Verificar Status dos Containers
+
+```bash
+docker compose ps
+```
+
+Ambos os serviços devem estar com status `running` e health `healthy`.
+
+---
+
+## 🧪 Testes
+
+Execute os testes unitários:
+
+```bash
+./mvnw test
+```
+
+Ou com Maven instalado:
+
+```bash
+mvn test
 ```
 
 ---
 
+## 📝 Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```env
+# Database
+DB_URL=jdbc:mysql://localhost:3306/billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+DB_USERNAME=root
+DB_PASSWORD=sua_senha
+
+# JPA
+JPA_SHOW_SQL=false
+JPA_FORMAT_SQL=false
+
+# Email
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=seu_email@gmail.com
+EMAIL_PASSWORD=sua_senha_app
+```
+
+**Nota:** O arquivo `.env` é carregado automaticamente pelo `application.properties`. Adicione `.env` ao `.gitignore` para evitar exposição de credenciais:
+
+```bash
+echo ".env" >> .gitignore
+```
+
+---
+
+## 🔐 Segurança
+
+- ✅ Validação de entrada em todos os endpoints
+- ✅ Constraints de integridade no banco de dados
+- ✅ Proteção contra SQL Injection via JPA
+- ✅ Mensagens de erro genéricas para falhas
+- ✅ Variáveis sensíveis em arquivo de ambiente
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+billing-the-bot/
+├── src/
+│   ├── main/
+│   │   ├── java/com/rodmag/youtube_premium_billing_bot/
+│   │   │   ├── controller/          # REST Controllers
+│   │   │   ├── service/             # Business Logic
+│   │   │   ├── repository/          # Data Access (JPA)
+│   │   │   ├── entity/              # Domain Models
+│   │   │   ├── exception/           # Custom Exceptions
+│   │   │   ├── resource/            # Additional Resources
+│   │   │   └── BillingBotApplication.java # Main Application
+│   │   └── resources/
+│   │       ├── application.properties   # Configuration (Properties)
+│   │       ├── application.yaml        # Application Name
+│   │       ├── templates/              # Email Templates (Thymeleaf)
+│   │       └── database.sql            # Initial Schema
+│   └── test/
+│       └── java/com/rodmag/         # Unit Tests
+├── docker-compose.yml               # Docker Compose Configuration
+├── Dockerfile                       # Docker Build
+├── pom.xml                          # Maven Dependencies
+├── README.md                        # This File
+└── LICENSE                          # MIT License
+```
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+---
+
+## 📞 Suporte
+
+Para dúvidas ou sugestões, abra uma [issue](https://github.com/RodrigoMaga/billing-the-bot/issues) no repositório.
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença [MIT](LICENSE). Veja o arquivo `LICENSE` para mais detalhes.
+
+---
+
+## 👨‍💻 Autor
+
+**Rodrigo Maga**
+- GitHub: [@RodrigoMaga](https://github.com/RodrigoMaga)
+- Email: rodrigomaga@example.com
+
+---
+
+**Última atualização:** Março de 2026
