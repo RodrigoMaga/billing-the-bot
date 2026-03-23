@@ -1,6 +1,5 @@
-DROP database IF EXISTS youtube_premium_billing_bot;
-CREATE DATABASE youtube_premium_billing_bot;
-USE youtube_premium_billing_bot;
+CREATE DATABASE IF NOT EXISTS billing_bot;
+USE billing_bot;
 
 CREATE TABLE participant (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY
@@ -20,6 +19,12 @@ CREATE TABLE participant (
 
                              notification_enable BOOLEAN NOT NULL DEFAULT TRUE
                                  COMMENT 'Enable or disable notifications for this participant',
+
+                             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                 COMMENT 'Creation timestamp',
+
+                             updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                 COMMENT 'Last update timestamp',
 
     CONSTRAINT uk_participant_email UNIQUE (email),
                              CONSTRAINT uk_participant_phone UNIQUE (phone),
@@ -42,6 +47,12 @@ CREATE TABLE payment (
 
                          payment_year INT NOT NULL
                              COMMENT 'Year of the payment (e.g. 2024)',
+
+                         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                             COMMENT 'Creation timestamp',
+
+                         updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                             COMMENT 'Last update timestamp',
 
                          CONSTRAINT uk_payment_participant_month
                              UNIQUE (payment_month, payment_year),

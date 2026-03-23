@@ -2,9 +2,13 @@ package com.rodmag.youtube_premium_billing_bot.entity;
 
 import com.rodmag.youtube_premium_billing_bot.exception.BillingOrderOutOfRangeException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +26,8 @@ public class Participant implements Serializable {
     @Column(name = "name",  nullable = false, length = 100)
     private String name;
 
-    @Column(name = "email",  nullable = false, length = 150)
+    @Column(name = "email",  nullable = false, length = 150, unique = true)
+    @Email(message = "Email deve ser válido")
     private String email;
 
     @Column(name = "phone",  nullable = false, length = 20)
@@ -33,6 +38,14 @@ public class Participant implements Serializable {
 
     @Column(name = "notification_enable", nullable = false)
     private Boolean notificationEnable = true;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "participant")
     private List<Payment> payments = new ArrayList<>();
@@ -95,6 +108,22 @@ public class Participant implements Serializable {
 
     public void setNotificationEnable(Boolean notificationEnable) {
         this.notificationEnable = notificationEnable;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public List<Payment> getPayments() {

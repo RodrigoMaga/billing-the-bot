@@ -13,9 +13,9 @@
     </parent>
 
     <groupId>com.rodmag</groupId>
-    <artifactId>youtube-premium-billing-bot</artifactId>
+    <artifactId>billing-the-bot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>youtube-premium-billing-bot</name>
+    <name>billing-the-bot</name>
     <description>chatbot to automate billing</description>
 
     <properties>

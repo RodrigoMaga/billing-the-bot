@@ -78,7 +78,7 @@ O projeto segue o padrão de **arquitetura em camadas**, garantindo separação 
 - **Service**: Contém toda lógica de negócio e validações
 - **Repository**: Acessa dados no banco via Spring Data JPA
 - **Entity**: Modelos de domínio mapeados para o banco
-- **DTO**: Objetos de transferência de dados (Request/Response)  
+- **DTO**: Objetos de transferência de dados (Request/Response)
 
 ---
 
@@ -111,6 +111,7 @@ UNIQUE (participant_id, month, year)
 | `email` | String | Email para contato |
 | `phone` | String | Telefone de contato |
 | `billingOrder` | Integer | Ordem de cobrança no grupo |
+| `notificationEnable` | Boolean | Notificações habilitadas |
 | `createdAt` | LocalDateTime | Data de criação |
 | `updatedAt` | LocalDateTime | Data de atualização |
 
@@ -261,8 +262,8 @@ DELETE /payments/{id}
 
 A API utiliza Pageable do Spring Data:
 
-- `page` → começa em 0  
-- `size` → quantidade de registros por página  
+- `page` → começa em 0
+- `size` → quantidade de registros por página
 
 Exemplo de retorno:
 

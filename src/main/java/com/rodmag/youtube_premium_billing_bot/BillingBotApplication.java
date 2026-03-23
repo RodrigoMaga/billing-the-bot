@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 @SpringBootApplication
-public class YoutubePremiumBillingBotApplication {
+public class BillingBotApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(YoutubePremiumBillingBotApplication.class, args);
+		SpringApplication.run(BillingBotApplication.class, args);
 	}
 
 }
