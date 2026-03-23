@@ -1,10 +1,11 @@
-FROM ubuntu:latest
-LABEL authors="Rodrigo"
-
-RUN apt-get update && apt-get install -y openjdk-21-jdk maven
+FROM maven:3.9-eclipse-temurin-21 as builder
+WORKDIR /app
+COPY pom.xml .
 COPY src src
-COPY pom.xml pom.xml
 COPY mvnw mvnw
 COPY .mvn .mvn
-RUN ./mvnw clean package
-ENTRYPOINT ["java", "-jar", "./target/youtube-premium-billing-bot-0.0.1-SNAPSHOT.jar"]
+RUN ./mvnw clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-jammy
+COPY --from=builder /app/target/billing-the-bot-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

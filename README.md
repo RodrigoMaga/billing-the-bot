@@ -1,60 +1,132 @@
-# YouTube Premium Billing Bot
+# 🤖 YouTube Premium Billing Bot
 
-API REST desenvolvida em **Java + Spring Boot** para gerenciamento de participantes e controle de pagamentos mensais de um grupo de assinatura compartilhada.
+<div align="center">
 
-O sistema permite:
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://www.java.com/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.12-green?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-- Cadastro de participantes
-- Registro de pagamentos mensais
-- Liquidação (baixa) de pagamentos pendentes
-- Consulta paginada de pagamentos
-- Garantia de integridade via constraint única no banco
+</div>
+
+## 📝 Sobre
+
+Uma **API REST robusta** desenvolvida em Java + Spring Boot para gerenciar participantes e controlar pagamentos mensais de um grupo de assinatura compartilhada de YouTube Premium.
+
+O sistema foi construído com foco em:
+- ✅ **Integridade de dados** - Constraints únicos no banco
+- ✅ **Arquitetura em camadas** - Separação clara de responsabilidades
+- ✅ **RESTful** - Endpoints bem estruturados
+- ✅ **Preparado para crescimento** - Pronto para integração com chatbots (WhatsApp)
+
+### Funcionalidades Principais
+
+- 👥 **Cadastro de participantes** com informações de contato
+- 💳 **Registro de pagamentos** mensais por participante
+- ✔️ **Liquidação de pagamentos** (marcar como pago)
+- 🔍 **Consultas paginadas** de pagamentos
+- 🔐 **Segurança de dados** com regras de integridade
+- 📊 **Filtros avançados** por mês, ano e participante
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Stack Tecnológico
 
-- Java 21
-- Spring Boot
-- Spring Data JPA
-- Hibernate
-- MySQL
-- Maven
-- Swagger / OpenAPI
-- Docker / Docker Compose
+| Tecnologia | Versão | Descrição |
+|-----------|--------|-----------|
+| **Java** | 21 | Linguagem principal do projeto |
+| **Spring Boot** | 3.2.12 | Framework web e de configuração |
+| **Spring Data JPA** | - | Abstração de persistência de dados |
+| **Hibernate** | - | ORM para mapeamento de entidades |
+| **MySQL** | 8.0+ | Banco de dados relacional |
+| **Maven** | 3.8+ | Gerenciador de dependências e build |
+| **Swagger/OpenAPI** | 3.0 | Documentação automática de APIs |
+| **Docker** | Compose | Containerização da aplicação |
+| **JUnit 5** | - | Framework de testes unitários |
 
 ---
 
-## 🏗 Arquitetura
+## 🏗️ Arquitetura
 
-O projeto segue arquitetura em camadas:
+O projeto segue o padrão de **arquitetura em camadas**, garantindo separação de responsabilidades e facilidade de manutenção:
 
-controller → service → repository → database
+```
+┌─────────────────────────────────────────┐
+│         HTTP Request/Response            │
+├─────────────────────────────────────────┤
+│         🎮 Controller Layer              │
+│    (REST Endpoints - PaymentController,  │
+│      ParticipantController)              │
+├─────────────────────────────────────────┤
+│      🧠 Service Layer                    │
+│  (Business Logic - PaymentService,       │
+│   ParticipantService)                    │
+├─────────────────────────────────────────┤
+│   📊 Repository Layer (JPA)              │
+│  (Data Access - PaymentRepository,       │
+│   ParticipantRepository)                 │
+├─────────────────────────────────────────┤
+│    🗄️ Database (MySQL)                   │
+│  (Persistent Data Storage)               │
+└─────────────────────────────────────────┘
+```
 
-- **Controller**: expõe endpoints REST  
-- **Service**: contém regras de negócio  
-- **Repository**: acesso ao banco via JPA  
-- **DTOs**: isolamento entre entidade e resposta da API  
+### Componentes da Arquitetura
+
+- **Controller**: Recebe requisições HTTP e retorna respostas JSON
+- **Service**: Contém toda lógica de negócio e validações
+- **Repository**: Acessa dados no banco via Spring Data JPA
+- **Entity**: Modelos de domínio mapeados para o banco
+- **DTO**: Objetos de transferência de dados (Request/Response)
 
 ---
 
 ## 📦 Modelo de Domínio
 
-### Participant
+### Diagrama Entidade-Relacionamento
 
-- id
-- name
-- email
-- phone
-- billingOrder
+```
+┌─────────────────────┐         ┌──────────────────────┐
+│   PARTICIPANT       │         │      PAYMENT         │
+├─────────────────────┤         ├──────────────────────┤
+│ id (PK)             │◄────────│ id (PK)              │
+│ name                │  1 : N  │ month                │
+│ email               │         │ year                 │
+│ phone               │         │ paymentStatus        │
+│ billingOrder        │         │ participant_id (FK)  │
+│ createdAt           │         │ createdAt            │
+│ updatedAt           │         │ updatedAt            │
+└─────────────────────┘         └──────────────────────┘
 
-### Payment
+UNIQUE (participant_id, month, year)
+```
 
-- id
-- month
-- year
-- paymentStatus (PAID | NOT_PAID)
-- participant
+### Participant (Participante)
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | Long | Identificador único |
+| `name` | String | Nome completo |
+| `email` | String | Email para contato |
+| `phone` | String | Telefone de contato |
+| `billingOrder` | Integer | Ordem de cobrança no grupo |
+| `notificationEnable` | Boolean | Notificações habilitadas |
+| `createdAt` | LocalDateTime | Data de criação |
+| `updatedAt` | LocalDateTime | Data de atualização |
+
+### Payment (Pagamento)
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | Long | Identificador único |
+| `month` | Integer | Mês (1-12) |
+| `year` | Integer | Ano (ex: 2026) |
+| `paymentStatus` | Enum | PAID ou NOT_PAID |
+| `participant` | Participant | Referência ao participante |
+| `createdAt` | LocalDateTime | Data de criação |
+| `updatedAt` | LocalDateTime | Data de atualização |
+| `updatedAt` | LocalDateTime | Data de atualização |
 
 ---
 
@@ -68,34 +140,127 @@ Isso garante que um participante não possa ter dois pagamentos no mesmo mês e 
 
 ---
 
-## 📌 Endpoints Principais
+## 🔌 API REST - Endpoints Principais
 
-### Criar Pagamento
+### Participantes
 
-POST /payments
+#### Criar Participante
+```http
+POST /participants
+Content-Type: application/json
 
-Request:
+{
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "phone": "+55 11 99999-9999",
+  "billingOrder": 1
+}
+```
 
+**Resposta (201 Created):**
 ```json
 {
-  "month": 2,
+  "id": 1,
+  "name": "João Silva",
+  "email": "joao@example.com",
+  "phone": "+55 11 99999-9999",
+  "billingOrder": 1,
+  "createdAt": "2026-03-23T10:30:00",
+  "updatedAt": "2026-03-23T10:30:00"
+  "createdAt": "2026-03-23T10:30:00",
+  "updatedAt": "2026-03-23T10:30:00"
+}
+```
+
+#### Listar Todos os Participantes
+```http
+GET /participants?page=0&size=10
+```
+
+#### Obter Participante por ID
+```http
+GET /participants/{id}
+```
+
+---
+
+### Pagamentos
+
+#### Criar Pagamento
+```http
+POST /payments
+Content-Type: application/json
+
+{
+  "month": 3,
   "year": 2026,
   "paymentStatus": "PAID",
   "participantId": 1
 }
 ```
 
----
+**Resposta (201 Created):**
+```json
+{
+  "id": 1,
+  "month": 3,
+  "year": 2026,
+  "paymentStatus": "PAID",
+  "participant": {
+    "id": 1,
+    "name": "João Silva"
+  },
+  "createdAt": "2026-03-23T10:31:00",
+  "updatedAt": "2026-03-23T10:31:00"
+  },
+  "createdAt": "2026-03-23T10:31:00",
+  "updatedAt": "2026-03-23T10:31:00"
+}
+```
 
-### Listar Pagamentos por Mês e Ano (Paginado)
+#### Listar Pagamentos por Settlement (Mês/Ano)
+```http
+GET /payments/settlement?month=3&year=2026&page=0&size=10
+```
 
-GET /payments/settlement?month=2&year=2026&page=0&size=10
+**Resposta:**
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "month": 3,
+      "year": 2026,
+      "paymentStatus": "PAID",
+      "participant": { "id": 1, "name": "João Silva" }
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1,
+  "number": 0,
+  "size": 10
+}
+```
 
----
+#### Listar Pagamentos por Participante
+```http
+GET /payments/participant/{participantId}?page=0&size=10
+```
 
-### Listar Pagamentos por Participante (Paginado)
+#### Atualizar Status de Pagamento
+```http
+PUT /payments/{id}
+Content-Type: application/json
 
-GET /payments/participant/{id}?page=0&size=10
+{
+  "paymentStatus": "PAID"
+}
+```
+
+#### Deletar Pagamento
+```http
+DELETE /payments/{id}
+```
 
 ---
 
@@ -103,8 +268,8 @@ GET /payments/participant/{id}?page=0&size=10
 
 A API utiliza Pageable do Spring Data:
 
-- `page` → começa em 0  
-- `size` → quantidade de registros por página  
+- `page` → começa em 0
+- `size` → quantidade de registros por página
 
 Exemplo de retorno:
 
@@ -130,66 +295,96 @@ Exemplo de retorno:
 
 ---
 
-## ⚙️ Como Executar Localmente
+## 📋 Pré-requisitos
 
-O arquivo `src/main/resources/application.properties` usa por padrão:
+Antes de começar, certifique-se de ter instalado:
 
-- host `localhost`
-- porta `3306`
-- banco `youtube_premium_billing_bot`
-git clone https://github.com/RodrigoMaga/youtube-premium-billing-bot.git
+- **Java 21** ou superior
+- **Maven 3.8+** ou use o `./mvnw` incluído
+- **MySQL 8.0+** (para execução local)
+- **Docker & Docker Compose** (apenas para containerização)
+- **Git**
 
-Então, para rodar pelo IntelliJ ou Maven localmente, basta ter um MySQL disponível na sua máquina com essas credenciais, ou sobrescrever:
+---
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+## ⚡ Quick Start - Execução Local
 
-Exemplo:
+### 1. Clone o Repositório
 
 ```bash
+git clone https://github.com/RodrigoMaga/billing-the-bot.git
+cd billing-the-bot
+```
+
+### 2. Configure o Banco de Dados
+
+O projeto usa MySQL por padrão. Certifique-se de que está rodando em `localhost:3306`:
+
+```sql
+CREATE DATABASE youtube_premium_billing_bot;
+```
+
+Ou modifique as credenciais em `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/youtube_premium_billing_bot
+spring.datasource.username=root
+spring.datasource.password=sua_senha
+```
+
+### 3. Execute a Aplicação
+
+```bash
+# Usando Maven
 ./mvnw spring-boot:run
+
+# Ou se estiver no Windows
+mvnw.cmd spring-boot:run
+```
+
+A API estará disponível em: **http://localhost:8080**
+
+### 4. Acesse a Documentação Swagger
+
+```
+http://localhost:8080/swagger-ui.html
 ```
 
 ---
 
-## 🐳 Como Executar com Docker Compose
+## 🐳 Execução com Docker Compose
 
-O `docker-compose.yml` sobe dois serviços:
+### Pré-requisitos
 
-- `mysql`
-- `youtube-bot`
+- Docker instalado
+- Docker Compose instalado
 
-Nesse cenário, a aplicação **não usa `localhost`** para o banco. Ela usa o hostname interno da rede Docker:
-
-- `jdbc:mysql://mysql:3306/youtube_premium_billing_bot`
-
-Para subir:
+### Passos
 
 ```bash
+# Clone o repositório
+git clone https://github.com/RodrigoMaga/billing-the-bot.git
+cd billing-the-bot
+
+# Inicie os serviços
 docker compose up --build
 ```
 
-Se quiser recriar tudo do zero, incluindo volume do banco:
+O `docker-compose.yml` inicia automaticamente:
+- **MySQL** na porta 3306
+- **Aplicação** na porta 8080
+
+**Nota importante:** Quando rodando em Docker Compose, a aplicação conecta ao banco usando o hostname interno `mysql` (não `localhost`).
+
+### Limpar Recursos Docker
 
 ```bash
+# Parar containers
+docker compose down
+
+# Remover volumes do banco (reset total)
 docker compose down -v
-docker compose up --build
 ```
 
 ---
 
-## 📚 Documentação Swagger
-
-Após iniciar a aplicação:
-
-http://localhost:8080/
-
----
-
-## 📝 Observações
-
-- Rodando localmente via IntelliJ, o banco costuma ser acessado por `localhost`
-- Rodando via Docker Compose, o banco deve ser acessado pelo nome do serviço `mysql`
-- O erro `Communications link failure` normalmente indica host/porta incorretos ou banco ainda não disponível no momento da conexão
-- O projeto está preparado para futura integração com chatbot (WhatsApp)

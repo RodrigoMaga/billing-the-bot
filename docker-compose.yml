@@ -1,5 +1,5 @@
 # =============================================================================
-# Youtube Bot - Docker Compose Configuration
+# Billing The Bot - Docker Compose Configuration
 # =============================================================================
 
 services:
@@ -9,10 +9,11 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_DATABASE: youtube_premium_billing_bot
+      MYSQL_DATABASE: billing_bot
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD obrigatoria}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./src/main/resources/database.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 10s
@@ -21,20 +22,20 @@ services:
       start_period: 20s
     restart: unless-stopped
     networks:
-      - youtube-bot-network
+      - billing-bot-network
 
-  youtube-bot:
+  billing-the-bot:
     networks:
-      - youtube-bot-network
-    image: rodrigo/youtube-bot:v1-ubuntu
-    container_name: youtube-bot
+      - billing-bot-network
+    image: rodrigo/billing-the-bot:v1
+    container_name: billing-the-bot
     ports:
       - "8080:8080"
     environment:
       # Server config
-      - YOUTUBE_EMAIL_USERNAME=${YOUTUBE_EMAIL_USERNAME}
-      - YOUTUBE_EMAIL_PASSWORD=${YOUTUBE_EMAIL_PASSWORD}
-      - DB_URL=jdbc:mysql://mysql:3306/youtube_premium_billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - DB_URL=jdbc:mysql://mysql:3306/billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
@@ -46,5 +47,5 @@ volumes:
   mysql_data:
 
 networks:
-  youtube-bot-network:
-    name: youtube-bot-network
+  billing-bot-network:
+    name: billing-bot-network
