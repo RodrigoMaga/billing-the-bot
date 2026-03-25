@@ -46,6 +46,7 @@ O sistema foi construído com foco em:
 | **Maven** | 3.8+ | Gerenciador de dependências e build |
 | **Swagger/OpenAPI** | 3.0 | Documentação automática de APIs |
 | **Thymeleaf** | - | Template engine para emails HTML |
+| **Flyway** | 9.22.3 | Versionamento e migrations de banco de dados |
 | **Docker** | Compose | Containerização da aplicação |
 | **JUnit 5** | - | Framework de testes unitários |
 
@@ -141,6 +142,79 @@ Existe constraint única no banco:
 UNIQUE (participant_id, payment_month, payment_year)
 
 Isso garante que um participante não possa ter dois pagamentos no mesmo mês e ano.
+
+---
+
+## 📊 Database Migrations com Flyway
+
+O projeto utiliza **Flyway** para versionamento e controle automático de migrations do banco de dados. Isso garante que todas as mudanças no schema sejam rastreáveis e executadas de forma consistente em todos os ambientes.
+
+### Localização das Migrations
+
+```
+src/main/resources/db/migration/
+├── V1__Create_participant_and_payment_tables.sql
+├── V2__Add_new_feature.sql (exemplo para futuro)
+└── ...
+```
+
+### Convenção de Naming
+
+As migrations seguem o padrão Flyway obrigatório:
+
+```
+V<VERSION>__<DESCRIPTION>.sql
+```
+
+**Exemplos válidos:**
+- ✅ `V1__Create_participant_and_payment_tables.sql`
+- ✅ `V2__Add_notification_date_to_payment.sql`
+- ✅ `V3__Create_audit_table.sql`
+
+**Importante:** Use **dois underscores (`__`)** entre a versão e a descrição!
+
+### Adicionando Uma Nova Migration
+
+Quando precisar modificar o schema do banco:
+
+1. Crie um novo arquivo em `src/main/resources/db/migration/`
+2. Use o próximo número de versão (exemplo: se a última é V1, use V2)
+3. Escreva os comandos SQL (ALTER TABLE, CREATE INDEX, etc)
+4. Faça commit e deploy - Flyway executará automaticamente!
+
+**Exemplo de V2:**
+```sql
+-- V2__Add_notification_date_to_payment.sql
+ALTER TABLE payment ADD COLUMN notification_sent_at DATETIME DEFAULT NULL;
+```
+
+### Histórico de Migrations
+
+Flyway mantém um histórico em uma tabela especial `flyway_schema_history`:
+
+```sql
+SELECT * FROM flyway_schema_history;
+```
+
+Cada linha rastreia:
+- **version**: Versão executada
+- **installed_on**: Data e hora da execução
+- **execution_time**: Tempo em ms
+- **success**: Status (1 = sucesso, 0 = falha)
+
+### Baseline para Schemas Existentes
+
+Se você estiver migrando um projeto que já tinha o banco criado (sem Flyway), o projeto está configurado com `baselineOnMigrate=true` no `application.properties`. Isso significa:
+
+- ✅ Se o schema já existir, Flyway marcará como "baseline" (versão 0)
+- ✅ Depois executa as novas migrations normalmente
+- ✅ Sem conflitos ou erros!
+
+```properties
+# application.properties
+spring.flyway.baselineOnMigrate=true
+spring.flyway.baselineVersion=0
+```
 
 ---
 
@@ -509,8 +583,9 @@ billing-the-bot/
 │   │   └── resources/
 │   │       ├── application.properties   # Configuration (Properties)
 │   │       ├── application.yaml        # Application Name
-│   │       ├── templates/              # Email Templates (Thymeleaf)
-│   │       └── V1__Create_participant_and_payment_tables.sql            # Initial Schema
+│   │       ├── db/migration/            # Flyway Migrations
+│   │       │   └── V1__Create_participant_and_payment_tables.sql
+│   │       └── templates/               # Email Templates (Thymeleaf)
 │   └── test/
 │       └── java/com/rodmag/         # Unit Tests
 ├── docker-compose.yml               # Docker Compose Configuration
