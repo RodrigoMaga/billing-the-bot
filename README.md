@@ -393,16 +393,19 @@ cd billing-the-bot
 
 O projeto usa MySQL por padrão. Certifique-se de que está rodando em `localhost:3306`:
 
-```sql
-CREATE DATABASE billing_bot;
+```bash
+# No Docker
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -d -p 3306:3306 mysql:8.0
 ```
 
-Ou crie um arquivo `.env` na raiz do projeto com as credenciais:
+**Importante:** O Flyway criará automaticamente o banco de dados `billing_bot` e todas as tabelas na primeira execução! Não precisa criar manualmente.
+
+Crie um arquivo `.env` na raiz do projeto com as credenciais:
 
 ```env
 DB_URL=jdbc:mysql://localhost:3306/billing_bot?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
 DB_USERNAME=root
-DB_PASSWORD=sua_senha
+DB_PASSWORD=root
 ```
 
 As variáveis do `.env` serão carregadas automaticamente pelo `application.properties`.
