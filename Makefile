@@ -1,5 +1,5 @@
 PROJECT_NAME=billing-the-bot
-REGISTRY_HOST=rodrigo
+REGISTRY_HOST=rodrigomaga
 
 .PHONY: help
 help:
@@ -13,8 +13,8 @@ all: help
 
 .PHONY: docker/build
 docker/build:
-	docker build --tag '$(REGISTRY_HOST)/$(PROJECT_NAME):v1' -f Dockerfile .
+	docker build --tag '$(REGISTRY_HOST)/$(PROJECT_NAME):latest' -f Dockerfile .
 
 .PHONY: docker/up
 docker/up: docker/build
-	docker compose up
+	docker compose up -d
