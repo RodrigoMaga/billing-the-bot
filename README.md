@@ -510,7 +510,7 @@ billing-the-bot/
 │   │       ├── application.properties   # Configuration (Properties)
 │   │       ├── application.yaml        # Application Name
 │   │       ├── templates/              # Email Templates (Thymeleaf)
-│   │       └── database.sql            # Initial Schema
+│   │       └── V1__Create_participant_and_payment_tables.sql            # Initial Schema
 │   └── test/
 │       └── java/com/rodmag/         # Unit Tests
 ├── docker-compose.yml               # Docker Compose Configuration

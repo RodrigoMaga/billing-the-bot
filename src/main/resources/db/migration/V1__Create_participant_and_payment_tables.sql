@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS billing_bot;
-USE billing_bot;
-
 CREATE TABLE participant (
                              id BIGINT AUTO_INCREMENT PRIMARY KEY
                                  COMMENT 'Unique identifier for each participant',
